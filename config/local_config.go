@@ -22,7 +22,7 @@ var (
 	defaultCFGType = "yaml"   // 默认配置文件格式
 )
 
-func initLocal() {
+func InitLocal() {
 	config := Setting{
 		CfgFile: getConfigName(),
 		CfgDirs: getConfigDirs(),

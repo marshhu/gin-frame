@@ -17,7 +17,7 @@ import (
 	"strings"
 )
 
-func initRemote() error {
+func InitRemote() error {
 	confServer := strings.TrimSpace(os.Getenv(CfgServer))
 	serverUrl, err := url.Parse(confServer)
 	log.Printf("%s=%s", CfgServer, serverUrl)
