@@ -6,25 +6,24 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
-	"fmt"
 )
 
 // Md5 md5验证
 func Md5(src string) string {
 	h := md5.New()
 	h.Write([]byte(src)) // 需要加密的字符串为
-	fmt.Printf("%s\n", hex.EncodeToString(h.Sum(nil)))
+	// fmt.Printf("%s\n", hex.EncodeToString(h.Sum(nil)))
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-// HmacSha256 Sha256
+// HmacSha256 sha
 func HmacSha256(src, key string) string {
 	m := hmac.New(sha256.New, []byte(key))
 	m.Write([]byte(src))
 	return hex.EncodeToString(m.Sum(nil))
 }
 
-// SHA256Str sha256验证
+// SHA256Str sha256验证 valid
 func SHA256Str(src string) string {
 	h := sha256.New()
 	h.Write([]byte(src)) // 需要加密的字符串为
