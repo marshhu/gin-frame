@@ -43,7 +43,7 @@ func (a *App) RegisterRouter(router func(eng *gin.Engine) error) *App {
 }
 
 // Run 启动服务
-func (a *App) Run() {
+func (a *App) Run(shutdownFunc func()) {
 	host := fmt.Sprintf(":%d", a.Config.HostPort)
 	gin.SetMode(a.Config.RunMode)
 	s := &http.Server{
@@ -67,9 +67,7 @@ func (a *App) Run() {
 	log.Println("Shutdown Server...")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	s.RegisterOnShutdown(func() {
-		log.Println("Server exited")
-	})
+	s.RegisterOnShutdown(shutdownFunc)
 	log.Println("Server exiting")
 	if err := s.Shutdown(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)
