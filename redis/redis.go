@@ -14,7 +14,7 @@ type Settings struct {
 	Password string `json:"password"`
 	Db       int    `json:"db"`
 	PoolSize int    `json:"poolSize"`
-	timeout  int    `json:"timeout"`
+	Timeout  int    `json:"timeout"`
 }
 
 // InitClient 初始化连接
@@ -26,7 +26,7 @@ func InitClient(settings Settings) (err error) {
 		PoolSize: settings.PoolSize, // 连接池大小
 	})
 
-	timeout := settings.timeout
+	timeout := settings.Timeout
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
 	defer cancel()
 

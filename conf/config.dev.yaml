@@ -1,0 +1,27 @@
+host:
+   port: 8888
+   read-timeout: 20
+   write-timeout: 20
+   run-mode: "debug"
+
+log:
+   level: "debug"
+   path: "./logs"
+   file-name: "app.log"
+   category: "app"
+
+sql-server:
+   -
+      driver-name: "sqlserver"
+      db-name: "role-operation"
+      data-source-name: "sqlserver://sa:sa123456@localhost:1433?database=RoleOperation&encrypt=disable&connection+timeout=30"
+      max-open-conn: 20
+      max-idle-conn: 10
+      max-conn-life-time: 100
+
+redis:
+   addr: "127.0.0.1:6379"
+   password: ""
+   db: 0
+   pool-size: 100
+   timeout: 5
