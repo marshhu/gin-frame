@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/marshhu/gin-frame/common"
 	"github.com/marshhu/gin-frame/utils"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
@@ -18,29 +19,29 @@ import (
 )
 
 func InitRemote() error {
-	confServer := strings.TrimSpace(os.Getenv(CfgServer))
+	confServer := strings.TrimSpace(os.Getenv(common.CfgServer))
 	serverUrl, err := url.Parse(confServer)
-	log.Printf("%s=%s", CfgServer, serverUrl)
+	log.Printf("%s=%s", common.CfgServer, serverUrl)
 	if err != nil {
 		return err
 	}
-	nameSpaceId := strings.TrimSpace(os.Getenv(CfgNameSpaceID))
-	log.Printf("%s=%s", CfgNameSpaceID, nameSpaceId)
+	nameSpaceId := strings.TrimSpace(os.Getenv(common.CfgNameSpaceID))
+	log.Printf("%s=%s", common.CfgNameSpaceID, nameSpaceId)
 	if len(nameSpaceId) == 0 {
 		return errors.New("未配置命名空间ID")
 	}
-	dataID := strings.TrimSpace(os.Getenv(CfgDataID))
-	log.Printf("%s=%s", CfgDataID, dataID)
+	dataID := strings.TrimSpace(os.Getenv(common.CfgDataID))
+	log.Printf("%s=%s", common.CfgDataID, dataID)
 	if len(nameSpaceId) == 0 {
 		return errors.New("未配置DataID")
 	}
-	group := strings.TrimSpace(os.Getenv(CfgGroup))
-	log.Printf("%s=%s", CfgGroup, group)
+	group := strings.TrimSpace(os.Getenv(common.CfgGroup))
+	log.Printf("%s=%s", common.CfgGroup, group)
 	if len(nameSpaceId) == 0 {
 		return errors.New("未配置group")
 	}
-	fileType := strings.TrimSpace(os.Getenv(CfgFileType))
-	log.Printf("%s=%s", CfgFileType, fileType)
+	fileType := strings.TrimSpace(os.Getenv(common.CfgFileType))
+	log.Printf("%s=%s", common.CfgFileType, fileType)
 	if len(nameSpaceId) == 0 {
 		fileType = "yaml"
 	}
@@ -72,8 +73,8 @@ func InitRemote() error {
 		constant.WithLogDir(logDir),
 		constant.WithCacheDir(catchDir),
 		constant.WithLogLevel("debug"),
-		//constant.WithUsername("nacos"),
-		//constant.WithPassword("Hzz880719"),
+		//common.WithUsername("nacos"),
+		//common.WithPassword("Hzz880719"),
 	)
 
 	// create config client

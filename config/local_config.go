@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/marshhu/gin-frame/common"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -45,7 +46,7 @@ func InitLocal() error {
 }
 
 func getConfigName() string {
-	cfgName := strings.TrimSpace(os.Getenv(CfgFileName))
+	cfgName := strings.TrimSpace(os.Getenv(common.CfgFileName))
 	if len(cfgName) == 0 {
 		cfgName = defaultCFGName
 	}
@@ -53,12 +54,12 @@ func getConfigName() string {
 	log.Printf("CFG_FILE=%s\r\n", cfgName)
 
 	// 根据环境变量加载不同的配置文件
-	env := strings.TrimSpace(os.Getenv(CfgGroup))
+	env := strings.TrimSpace(os.Getenv(common.CfgGroup))
 
 	if len(env) == 0 {
 		env = defaultCFGEnv
 	}
-	log.Printf("%s=%s\r	\n", CfgGroup, env)
+	log.Printf("%s=%s\r	\n", common.CfgGroup, env)
 
 	cfgFileName := cfgName + "." + env
 
@@ -69,15 +70,15 @@ func getConfigDirs() []string {
 	// 添加多个配置文件路径，以先找到的为准
 	rootDir, _ := os.Getwd()
 	configDir := filepath.FromSlash(path.Join(rootDir, "conf"))
-	envDir := os.Getenv(CfgPath)
-	log.Printf("%s=%s\r\n", CfgPath, envDir)
+	envDir := os.Getenv(common.CfgPath)
+	log.Printf("%s=%s\r\n", common.CfgPath, envDir)
 
 	etcDirs := []string{envDir, configDir, rootDir}
 	return etcDirs
 }
 
 func getConfigType() string {
-	cfgFileType := strings.TrimSpace(os.Getenv(CfgFileType))
+	cfgFileType := strings.TrimSpace(os.Getenv(common.CfgFileType))
 	if len(cfgFileType) == 0 {
 		cfgFileType = defaultCFGType
 	}
