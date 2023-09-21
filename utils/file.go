@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"bytes"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"os"
@@ -91,4 +93,36 @@ func CopyFile(sourcePath, destPath, fileName string) error {
 		return err
 	}
 	return nil
+}
+
+func StreamToByte(stream io.Reader) []byte {
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(stream)
+	return buf.Bytes()
+}
+
+// ReadFile 读取文件 ReadFile
+func ReadFile(filePath string) ([]byte, error) {
+	fin, err := os.Open(filePath)
+	defer fin.Close()
+	if err != nil {
+		return nil, err
+	}
+	return file2Bytes(fin)
+}
+
+// file2Bytes
+func file2Bytes(file *os.File) ([]byte, error) {
+	defer file.Close()
+	stats, err := file.Stat()
+	if err != nil {
+		return nil, err
+	}
+	data := make([]byte, stats.Size())
+	count, err := file.Read(data)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("read file len: %d \n", count)
+	return data, nil
 }
