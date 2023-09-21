@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -22,7 +21,7 @@ var (
 	defaultCFGType = "yaml"   // 默认配置文件格式
 )
 
-func InitLocal() {
+func InitLocal() error {
 	config := Setting{
 		CfgFile: getConfigName(),
 		CfgDirs: getConfigDirs(),
@@ -39,9 +38,10 @@ func InitLocal() {
 
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
-		panic(fmt.Errorf("加载配置文件失败: %s \n", err))
+		return err
 	}
 	log.Println("使用的配置文件位置：" + viper.ConfigFileUsed())
+	return nil
 }
 
 func getConfigName() string {
