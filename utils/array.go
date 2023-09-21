@@ -28,3 +28,12 @@ func ArrayContains(array interface{}, val interface{}) (hasItem bool, index int)
 
 	return false, -1
 }
+
+func StringInArray(s string, arr []string) bool {
+	for _, i := range arr {
+		if i == s {
+			return true
+		}
+	}
+	return false
+}
