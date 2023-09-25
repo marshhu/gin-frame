@@ -4,46 +4,35 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/marshhu/gin-frame/common"
 	"github.com/marshhu/gin-frame/utils"
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 	"github.com/spf13/viper"
-	"log"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 )
 
-func InitRemote() error {
-	confServer := strings.TrimSpace(os.Getenv(common.CfgServer))
-	serverUrl, err := url.Parse(confServer)
-	log.Printf("%s=%s", common.CfgServer, serverUrl)
+func InitRemote(envInfo *EnvConf) error {
+	serverUrl, err := url.Parse(envInfo.CfgServer)
 	if err != nil {
 		return err
 	}
-	nameSpaceId := strings.TrimSpace(os.Getenv(common.CfgNameSpaceID))
-	log.Printf("%s=%s", common.CfgNameSpaceID, nameSpaceId)
-	if len(nameSpaceId) == 0 {
+	if len(envInfo.CfgNameSpaceID) == 0 {
 		return errors.New("未配置命名空间ID")
 	}
-	dataID := strings.TrimSpace(os.Getenv(common.CfgDataID))
-	log.Printf("%s=%s", common.CfgDataID, dataID)
-	if len(nameSpaceId) == 0 {
+
+	if len(envInfo.CfgDataID) == 0 {
 		return errors.New("未配置DataID")
 	}
-	group := strings.TrimSpace(os.Getenv(common.CfgGroup))
-	log.Printf("%s=%s", common.CfgGroup, group)
-	if len(nameSpaceId) == 0 {
+	if len(envInfo.CfgGroup) == 0 {
 		return errors.New("未配置group")
 	}
-	fileType := strings.TrimSpace(os.Getenv(common.CfgFileType))
-	log.Printf("%s=%s", common.CfgFileType, fileType)
-	if len(nameSpaceId) == 0 {
-		fileType = "yaml"
+
+	if len(envInfo.CfgFileType) == 0 {
+		return errors.New("未配置file type")
 	}
 	serverUrlArray := strings.Split(serverUrl.Host, ":")
 	if len(serverUrlArray) != 2 {
@@ -67,7 +56,7 @@ func InitRemote() error {
 	}
 	//create ClientConfig
 	cc := *constant.NewClientConfig(
-		constant.WithNamespaceId(nameSpaceId),
+		constant.WithNamespaceId(envInfo.CfgNameSpaceID),
 		constant.WithTimeoutMs(5000),
 		constant.WithNotLoadCacheAtStart(true),
 		constant.WithLogDir(logDir),
@@ -89,19 +78,19 @@ func InitRemote() error {
 	}
 	//get config
 	content, err := client.GetConfig(vo.ConfigParam{
-		DataId: dataID,
-		Group:  group,
+		DataId: envInfo.CfgDataID,
+		Group:  envInfo.CfgGroup,
 	})
 	if err != nil {
 		return err
 	}
 	fmt.Println("GetConfig,config :" + content)
-	viper.SetConfigType(fileType)
+	viper.SetConfigType(envInfo.CfgFileType)
 	viper.ReadConfig(bytes.NewBuffer([]byte(content)))
 	// 监听变化
 	err = client.ListenConfig(vo.ConfigParam{
-		DataId: dataID,
-		Group:  group,
+		DataId: envInfo.CfgDataID,
+		Group:  envInfo.CfgGroup,
 		OnChange: func(namespace, group, dataId, data string) {
 			fmt.Println("namespace:" + namespace + "group:" + group + ", dataId:" + dataId + ", data:" + data)
 			viper.ReadConfig(bytes.NewBuffer([]byte(data)))

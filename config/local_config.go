@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 )
 
 type Setting struct {
@@ -22,11 +21,11 @@ var (
 	defaultCFGType = "yaml"   // 默认配置文件格式
 )
 
-func InitLocal() error {
+func InitLocal(envInfo *EnvConf) error {
 	config := Setting{
-		CfgFile: getConfigName(),
-		CfgDirs: getConfigDirs(),
-		CfgType: getConfigType(),
+		CfgFile: getConfigName(envInfo),
+		CfgDirs: getConfigDirs(envInfo),
+		CfgType: getConfigType(envInfo),
 	}
 	viper.SetConfigName(config.CfgFile) // name of config file (without extension)
 	viper.SetConfigType(config.CfgType) // REQUIRED if the config file does not have the extension in the name
@@ -45,17 +44,15 @@ func InitLocal() error {
 	return nil
 }
 
-func getConfigName() string {
-	cfgName := strings.TrimSpace(os.Getenv(common.CfgFileName))
+func getConfigName(envInfo *EnvConf) string {
+	cfgName := envInfo.CfgFileName
 	if len(cfgName) == 0 {
 		cfgName = defaultCFGName
 	}
-
 	log.Printf("CFG_FILE=%s\r\n", cfgName)
 
 	// 根据环境变量加载不同的配置文件
-	env := strings.TrimSpace(os.Getenv(common.CfgGroup))
-
+	env := envInfo.CfgGroup
 	if len(env) == 0 {
 		env = defaultCFGEnv
 	}
@@ -66,19 +63,19 @@ func getConfigName() string {
 	return cfgFileName
 }
 
-func getConfigDirs() []string {
+func getConfigDirs(envInfo *EnvConf) []string {
 	// 添加多个配置文件路径，以先找到的为准
 	rootDir, _ := os.Getwd()
 	configDir := filepath.FromSlash(path.Join(rootDir, "conf"))
-	envDir := os.Getenv(common.CfgPath)
-	log.Printf("%s=%s\r\n", common.CfgPath, envDir)
-
-	etcDirs := []string{envDir, configDir, rootDir}
+	etcDirs := []string{configDir, rootDir}
+	if len(envInfo.CfgPath) > 0 {
+		etcDirs = append(etcDirs, envInfo.CfgPath)
+	}
 	return etcDirs
 }
 
-func getConfigType() string {
-	cfgFileType := strings.TrimSpace(os.Getenv(common.CfgFileType))
+func getConfigType(envInfo *EnvConf) string {
+	cfgFileType := envInfo.CfgFileType
 	if len(cfgFileType) == 0 {
 		cfgFileType = defaultCFGType
 	}

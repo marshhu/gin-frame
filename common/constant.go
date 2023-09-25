@@ -1,5 +1,11 @@
 package common
 
+type EnvType string
+
+const (
+	EnvironmentEnvType EnvType = "environment"
+	LocalFileEnvType   EnvType = "local-file"
+)
 const (
 	UseRemoteConf  = "USE_REMOTE_CONF"   // 是否启用远程配置
 	CfgServer      = "CFG_SERVER"        // 远程配置服务地址

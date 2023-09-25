@@ -9,6 +9,10 @@ import (
 )
 
 func main() {
+	if err := app.InitConf(common.EnvironmentEnvType); err != nil {
+		log.Println(err)
+		panic(err)
+	}
 	err := app.InitModules([]string{common.SqlServerModule, common.RedisModule})
 	if err != nil {
 		log.Println(err)
