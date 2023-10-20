@@ -23,12 +23,19 @@ func ReadXlsx(fileContent []byte, sheetName string) ([][]string, error) {
 		return nil, fmt.Errorf("%s sheet页不存在", sheetName)
 	}
 	table := make([][]string, len(sheet.Rows))
+	maxCol := len(sheet.Rows[0].Cells)
 	for k := 0; k < len(sheet.Rows); k++ {
 		table[k] = []string{}
 		for i := 0; i < len(sheet.Rows[k].Cells); i++ {
 			table[k] = append(table[k], sheet.Rows[k].Cells[i].String()) //注意，有时间列的时候要转
 		}
+		if len(sheet.Rows[k].Cells) < maxCol { // 补齐空白缺失列
+			for j := len(sheet.Rows[k].Cells); j < maxCol; j++ {
+				table[k] = append(table[k], "")
+			}
+		}
 	}
+
 	return table, nil
 }
 
