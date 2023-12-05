@@ -170,3 +170,14 @@ func Contains(array []string, item string) bool {
 	}
 	return false
 }
+
+func AppendZero(str string, strLen int) string {
+	if len(str) >= strLen {
+		return str
+	}
+	charArray := []rune(str)
+	for i := 0; i < strLen-len(str); i++ {
+		charArray = append(charArray, '0')
+	}
+	return string(charArray)
+}

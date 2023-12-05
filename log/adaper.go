@@ -80,7 +80,8 @@ func (adapter *zapAdapter) getLogWriter() zapcore.WriteSyncer {
 
 func (adapter *zapAdapter) getEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	//encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	encoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.000")
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	//return zapcore.NewConsoleEncoder(encoderConfig)
 	return zapcore.NewJSONEncoder(encoderConfig)
