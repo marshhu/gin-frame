@@ -13,7 +13,7 @@ func main() {
 		log.Println(err)
 		panic(err)
 	}
-	err := app.InitModules([]string{common.SqlServerModule, common.RedisModule})
+	err := app.InitModules([]string{common.MysqlModule, common.RedisModule})
 	if err != nil {
 		log.Println(err)
 		panic(err)

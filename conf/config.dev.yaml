@@ -10,11 +10,20 @@ log:
    file-name: "app.log"
    category: "app"
 
-sql-server:
+#sql-server:
+#   -
+#      driver-name: "sqlserver"
+#      db-name: "role-operation"
+#      data-source-name: "sqlserver://sa:sa123456@localhost:1433?database=RoleOperation&encrypt=disable&connection+timeout=30"
+#      max-open-conn: 20
+#      max-idle-conn: 10
+#      max-conn-life-time: 100
+
+mysql:
    -
-      driver-name: "sqlserver"
-      db-name: "role-operation"
-      data-source-name: "sqlserver://sa:sa123456@localhost:1433?database=RoleOperation&encrypt=disable&connection+timeout=30"
+      driver-name: "mysql"
+      db-name: "my-tools"
+      data-source-name: "root:123456@tcp(127.0.0.1:3306)/my-tools?charset=utf8mb4&parseTime=True&loc=Local"
       max-open-conn: 20
       max-idle-conn: 10
       max-conn-life-time: 100

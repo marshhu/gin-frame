@@ -28,7 +28,7 @@ func InitModules(modules []string) error {
 	// 初始化mysql
 	if utils.StringInArray(common.MysqlModule, modules) {
 		dbSettings := GetDbSettings(common.MysqlModule)
-		if err := db.InitSqlServer(dbSettings); err != nil {
+		if err := db.InitMysql(dbSettings); err != nil {
 			return err
 		}
 	}
