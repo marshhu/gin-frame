@@ -132,12 +132,45 @@ func WriteXLSXFileStream(w http.ResponseWriter, fileName string, file []byte) er
 }
 
 func WriteFileStream(w http.ResponseWriter, fileName string, file []byte) error {
-	//w.Header().Add("Content-Type",
-	//	"application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 	w.Header().Add("Content-Type",
 		"application/octet-stream")
 	w.Header().Add("Content-Disposition", "attachment; filename=\""+fileName+"\"")
 	w.Header().Add("Content-Transfer-Encoding", "binary")
 	_, err := w.Write(file)
 	return err
+}
+
+// ExportToFile 导出到file
+func ExportToFile(sheetName string, columnNames []interface{}, data [][]interface{}) (f *excelize.File, err error) {
+	f = excelize.NewFile()
+	if len(sheetName) == 0 {
+		sheetName = "Sheet1"
+	} else {
+		// 创建一个Sheet页
+		index, err := f.NewSheet(sheetName)
+		if err != nil {
+			return nil, err
+		}
+		// 设置活动Sheet页
+		f.SetActiveSheet(index)
+	}
+
+	streamWriter, err := f.NewStreamWriter(sheetName)
+	if err != nil {
+		return nil, err
+	}
+	err = streamWriter.SetRow("A1", columnNames)
+	if err != nil {
+		return nil, err
+	}
+	for index, model := range data {
+		cell, _ := excelize.CoordinatesToCellName(1, index+2)
+		if err := streamWriter.SetRow(cell, model); err != nil {
+			return nil, err
+		}
+	}
+	if err := streamWriter.Flush(); err != nil {
+		fmt.Println(err)
+	}
+	return f, nil
 }
