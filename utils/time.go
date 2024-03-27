@@ -158,3 +158,26 @@ func TimeParse(val string, layout string) time.Time {
 		return time.Now().UTC()
 	}
 }
+
+func ToLocationDateTime(utcTime time.Time, location string) string {
+	// 加载指定时区
+	loc, err := time.LoadLocation(location)
+	if err != nil {
+		return utcTime.Format("2006-01-02 15:04:05")
+	}
+	// 转为指定时区时间
+	localTime := utcTime.In(loc)
+	return localTime.Format("2006-01-02 15:04:05")
+}
+
+func ToChinaDateTime(utcTime time.Time) string {
+	// 加载指定时区
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		return utcTime.Format("2006-01-02 15:04:05")
+	}
+	// 转为指定时区时间
+	localTime := utcTime.In(loc)
+	formatTimeStr := localTime.Format("2006-01-02 15:04:05")
+	return formatTimeStr
+}
