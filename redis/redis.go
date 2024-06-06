@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// RClient 声明一个全局的redis.Client量
-var RClient *redis.Client
+// rClient 声明一个全局的redis.Client量
+var rClient *redis.Client
 
 var once sync.Once
 
@@ -25,7 +25,7 @@ type Settings struct {
 func InitClient(settings Settings) error {
 	var err error
 	once.Do(func() {
-		RClient = redis.NewClient(&redis.Options{
+		rClient = redis.NewClient(&redis.Options{
 			Addr:     settings.Addr,
 			Password: settings.Password, // no password set
 			DB:       settings.Db,       // use default DB
@@ -36,22 +36,34 @@ func InitClient(settings Settings) error {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
 		defer cancel()
 
-		_, err = RClient.Ping(ctx).Result()
+		_, err = rClient.Ping(ctx).Result()
 	})
 	return err
 }
 
-func RedisSet(ctx context.Context, key string, object interface{}, expiration time.Duration) error {
+func Set(ctx context.Context, key string, object interface{}, expiration time.Duration) error {
 	jsonStr, err := json.Marshal(object)
 	if err != nil {
 		return err
 	}
-	if err = RClient.Set(ctx, key, jsonStr, expiration).Err(); err != nil {
+	if err = rClient.Set(ctx, key, jsonStr, expiration).Err(); err != nil {
 		return err
 	}
 	return err
 }
 
-func RedisGet(ctx context.Context, key string) (string, error) {
-	return RClient.Get(ctx, key).Result()
+func Get(ctx context.Context, key string) (string, error) {
+	return rClient.Get(ctx, key).Result()
+}
+
+func Del(ctx context.Context, key string) error {
+	_, err := rClient.Get(ctx, key).Result()
+	if err == redis.Nil { //key不存在
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	_, err = rClient.Del(ctx, key).Result()
+	return err
 }

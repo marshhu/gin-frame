@@ -174,3 +174,48 @@ func ExportToFile(sheetName string, columnNames []interface{}, data [][]interfac
 	}
 	return f, nil
 }
+
+// ExportToExcel 导出数据到 Excel 文件字节
+func ExportToExcel(titles []string, data [][]string) ([]byte, error) {
+	// 创建一个新的 Excel 文件
+	f := excelize.NewFile()
+	defer f.Close()
+	// 创建一个Sheet页
+	index, err := f.NewSheet("Sheet1")
+	if err != nil {
+		return nil, err
+	}
+	// 设置活动Sheet页
+	f.SetActiveSheet(index)
+	styleTitle, err := f.NewStyle(&excelize.Style{
+		Font: &excelize.Font{Bold: true},
+	})
+	if err != nil {
+		return nil, err
+	}
+	// 高亮标题行
+	f.SetCellStyle("Sheet1", "A1", fmt.Sprintf("%c%d", 'A'+len(titles)-1, 1), styleTitle)
+	// 设置标题行的行高
+	f.SetRowHeight("Sheet1", 1, 25)
+	// 设置列的宽度
+	f.SetColWidth("Sheet1", "A", fmt.Sprintf("%c", 'A'+len(titles)-1), 20)
+	// 创建标题行
+	for col, value := range titles {
+		f.SetCellValue("Sheet1", fmt.Sprintf("%c%d", 'A'+col, 1), value)
+	}
+
+	// 写入数据
+	row := 2
+	for _, v := range data {
+		f.SetRowHeight("Sheet1", row, 20)
+		for col, value := range v {
+			f.SetCellValue("Sheet1", fmt.Sprintf("%c%d", 'A'+col, row), value)
+		}
+		row++
+	}
+
+	// 获取 Excel 文件的字节数据
+	buffer, _ := f.WriteToBuffer()
+
+	return buffer.Bytes(), nil
+}

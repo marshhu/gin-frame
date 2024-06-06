@@ -6,9 +6,15 @@ import (
 	"strings"
 )
 
-// ToInt to int
+// ToInt to int64
 func ToInt(val string) (int64, error) {
 	return strconv.ParseInt(val, 10, 64)
+}
+
+// ToInt32 to int32
+func ToInt32(val string) (int, error) {
+	t, err := strconv.ParseInt(val, 10, 32)
+	return int(t), err
 }
 
 // ToFloat to float

@@ -20,14 +20,20 @@ func InitModules(modules []string) error {
 	log.Init(&logSetting)
 	// 初始化sql-server
 	if utils.StringInArray(common.SqlServerModule, modules) {
-		dbSettings := GetDbSettings(common.SqlServerModule)
-		if err := db.InitSqlServer(dbSettings); err != nil {
+		dbSettings, err := GetDbSettings(common.SqlServerModule)
+		if err != nil {
+			return err
+		}
+		if err = db.InitSqlServer(dbSettings); err != nil {
 			return err
 		}
 	}
 	// 初始化mysql
 	if utils.StringInArray(common.MysqlModule, modules) {
-		dbSettings := GetDbSettings(common.MysqlModule)
+		dbSettings, err := GetDbSettings(common.MysqlModule)
+		if err != nil {
+			return err
+		}
 		if err := db.InitMysql(dbSettings); err != nil {
 			return err
 		}
@@ -79,8 +85,11 @@ func GetLogSettings() log.Settings {
 	return settings
 }
 
-func GetDbSettings(confNodeName string) []db.Settings {
+func GetDbSettings(confNodeName string) ([]db.Settings, error) {
 	sqlServerArray := viper.Get(confNodeName)
+	if sqlServerArray == nil {
+		return nil, fmt.Errorf("读取%s配置失败", confNodeName)
+	}
 	var dbInfos []db.Settings
 	for _, v := range sqlServerArray.([]interface{}) {
 		confMap := v.(map[string]interface{})
@@ -94,7 +103,7 @@ func GetDbSettings(confNodeName string) []db.Settings {
 		}
 		dbInfos = append(dbInfos, dbInfo)
 	}
-	return dbInfos
+	return dbInfos, nil
 }
 
 func GetRedisSettings() redis.Settings {
