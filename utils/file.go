@@ -69,6 +69,17 @@ func RootDir() string {
 	return wd
 }
 
+// ExecutablePath 获取可执行文件所在目录
+func ExecutablePath() string {
+	exe, err := os.Executable()
+	if err != nil {
+		fmt.Println("Error getting executable path:", err)
+		return ""
+	}
+	exePath := filepath.Dir(exe)
+	return exePath
+}
+
 func CopyFile(sourcePath, destPath, fileName string) error {
 	// 打开源文件
 	sourceFile, err := os.Open(sourcePath)

@@ -25,6 +25,9 @@ func GetEnvConf(envType common.EnvType) (*EnvConf, error) {
 	log.Printf("envType=%s", envType)
 	if envType == common.LocalFileEnvType {
 		envFile := filepath.Join(utils.RootDir(), "env.json")
+		if utils.CheckNotExist(envFile) { // 如果文件不存在
+			envFile = filepath.Join(utils.ExecutablePath(), "env.json")
+		}
 		content, err := utils.ReadFile(envFile)
 		if err != nil {
 			return nil, err

@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	if err := app.InitConf(common.EnvironmentEnvType); err != nil {
+	if err := app.InitConf(common.LocalFileEnvType); err != nil {
 		log.Println(err)
 		panic(err)
 	}
